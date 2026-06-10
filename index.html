@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratorium Maya - Dinamika: Ragam Jenis Gaya</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e27;--bg2:#111640;--bg3:#181d4e;--bg3h:#1f2560;
+  --cy:#00e5ff;--mg:#ff006e;--yl:#ffd600;--gn:#00e676;--or:#ff9100;
+  --t1:#eef0ff;--t2:#a0a6d6;--t3:#6b72a8;
+  --bdr:rgba(0,229,255,0.15);--glow:0 0 30px rgba(0,229,255,0.1);
+  --r:12px;--rs:8px;--nav-h:52px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Poppins',sans-serif;background:#000;color:var(--t1)}
+
+/* 16:9 letterbox */
+#root{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:#000}
+#app{position:relative;background:var(--bg);overflow:hidden;width:100%;height:100%;aspect-ratio:16/9;max-width:calc(100vh * 16/9);max-height:calc(100vw * 9/16)}
+
+#particles{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+.nav{position:absolute;top:0;left:0;right:0;z-index:100;background:rgba(10,14,39,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:0 1.5rem;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-family:'Space Mono',monospace;font-weight:700;font-size:.85rem;color:var(--cy);cursor:pointer;display:flex;align-items:center;gap:6px}
+.nav-links{display:flex;gap:2px;list-style:none}
+.nav-links button{background:none;border:1px solid transparent;color:var(--t2);padding:5px 12px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;transition:.3s;font-family:'Poppins',sans-serif}
+.nav-links button:hover{color:var(--cy);background:rgba(0,229,255,0.06)}
+.nav-links button.on{color:var(--cy);background:rgba(0,229,255,0.1);border-color:rgba(0,229,255,0.25)}
+.snd{background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.3);color:var(--cy);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:.3s}
+.snd:hover{background:rgba(0,229,255,0.2)}
+.snd.off{color:var(--t3);border-color:var(--t3)}
+
+/* PAGES */
+.pg{display:none;position:absolute;top:var(--nav-h);left:0;right:0;bottom:0;overflow:hidden;z-index:2}
+.pg.on{display:flex;flex-direction:column;animation:pin .4s ease}
+@keyframes pin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.pi{width:100%;height:100%;overflow:hidden;display:flex;flex-direction:column}
+.pi-inner{flex:1;overflow:hidden;padding:.55rem 1.4rem;display:flex;flex-direction:column;gap:.4rem}
+
+.ph{text-align:center;flex-shrink:0;padding:.2rem 0 .1rem}
+.ph .ol{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--cy);margin-bottom:.15rem}
+.ph h1{font-family:'Playfair Display',serif;font-size:clamp(1.1rem,2.2vw,1.55rem);font-weight:900;margin-bottom:.1rem}
+.gw{background:linear-gradient(135deg,var(--cy),var(--mg),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ph p{color:var(--t2);font-size:.7rem;line-height:1.5}
+.dv{width:36px;height:2px;background:linear-gradient(90deg,var(--cy),var(--mg));border-radius:2px;margin:.28rem auto 0}
+
+/* HOME */
+.hc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 1rem;gap:.7rem}
+.hb{display:inline-block;background:linear-gradient(135deg,rgba(0,229,255,0.15),rgba(255,0,110,0.15));border:1px solid rgba(0,229,255,0.3);padding:3px 14px;border-radius:50px;font-size:.63rem;font-weight:600;color:var(--cy);letter-spacing:2px;text-transform:uppercase}
+.hc h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3.5vw,2.7rem);font-weight:900;line-height:1.1}
+.hc>p{font-size:.78rem;color:var(--t2);max-width:490px;line-height:1.6}
+.hg{display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem;max-width:680px;width:100%}
+.hg-c{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r);padding:.8rem .5rem;cursor:pointer;transition:.35s;text-align:center}
+.hg-c:hover{transform:translateY(-4px);background:var(--bg3h);box-shadow:var(--glow);border-color:rgba(0,229,255,0.3)}
+.hg-c .ic{font-size:1.35rem;margin-bottom:.28rem}
+.hg-c h3{font-size:.7rem;font-weight:700;margin-bottom:.1rem}
+.hg-c p{font-size:.58rem;color:var(--t3)}
+
+/* MATERI */
+.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;flex:1}
+.mc{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r);padding:.85rem .95rem;transition:.4s;cursor:pointer;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.mc::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--cy),var(--mg));transform:scaleX(0);transform-origin:left;transition:.4s}
+.mc:hover::before{transform:scaleX(1)}
+.mc:hover{transform:translateY(-3px);background:var(--bg3h);box-shadow:var(--glow)}
+.mc .ci{width:35px;height:35px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.98rem;margin-bottom:.45rem}
+.mc h3{font-size:.76rem;font-weight:700;margin-bottom:.22rem}
+.mc p{color:var(--t2);font-size:.67rem;line-height:1.6}
+.cc{background:rgba(0,229,255,0.12);color:var(--cy)}.cm{background:rgba(255,0,110,0.12);color:var(--mg)}.cy2{background:rgba(255,214,0,0.12);color:var(--yl)}.cg{background:rgba(0,230,118,0.12);color:var(--gn)}.co{background:rgba(255,145,0,0.12);color:var(--or)}
+
+/* TUJUAN PEMBELAJARAN */
+.tg{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:.55rem;flex:1;min-height:0}
+.tc{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r);padding:.7rem .9rem;display:flex;gap:.7rem;align-items:flex-start;transition:.35s;position:relative;overflow:hidden}
+.tc::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,var(--cy),var(--mg));transform:scaleY(0);transform-origin:top;transition:.4s}
+.tc:hover::before{transform:scaleY(1)}
+.tc:hover{transform:translateY(-3px);background:var(--bg3h);box-shadow:var(--glow);border-color:rgba(0,229,255,.3)}
+.tnum{font-family:'Space Mono',monospace;font-size:1.15rem;font-weight:700;background:linear-gradient(135deg,var(--cy),var(--mg));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;min-width:32px;line-height:1;flex-shrink:0}
+.tbody h3{font-size:.72rem;font-weight:700;margin-bottom:.22rem;line-height:1.25}
+.tbody p{color:var(--t2);font-size:.62rem;line-height:1.55}
+
+/* MODAL */
+.mo{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.mo.on{display:flex}
+.mb{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);max-width:580px;width:100%;max-height:78vh;overflow-y:auto;padding:1.4rem;position:relative;animation:mi .3s ease}
+@keyframes mi{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+.mx{position:sticky;top:0;float:right;background:rgba(255,255,255,.08);border:none;color:var(--t1);width:27px;height:27px;border-radius:50%;cursor:pointer;font-size:.88rem;display:flex;align-items:center;justify-content:center;transition:.3s;z-index:5}
+.mx:hover{background:rgba(255,0,110,.3)}
+.mb h2{font-size:1.05rem;margin-bottom:.7rem;padding-right:32px}
+.mb h3{font-size:.83rem;color:var(--cy);margin:.65rem 0 .22rem}
+.mb p,.mb li{color:var(--t2);font-size:.78rem;line-height:1.7}
+.mb ul{padding-left:1rem}
+.mb li{margin-bottom:.18rem}
+.fb{background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.2);border-radius:var(--rs);padding:.55rem .8rem;margin:.4rem 0;font-family:'Space Mono',monospace;font-size:.86rem;text-align:center;color:var(--cy)}
+
+/* TATA CARA */
+.sl{display:flex;flex-direction:column;gap:.42rem;flex:1;justify-content:center}
+.si{display:flex;gap:.8rem;align-items:flex-start;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r);padding:.68rem .9rem;transition:.35s}
+.si:hover{transform:translateX(4px);background:var(--bg3h);border-color:rgba(0,229,255,.3)}
+.sn{width:33px;height:33px;min-width:33px;border-radius:9px;background:linear-gradient(135deg,var(--cy),#007cf0);color:#000;font-family:'Space Mono',monospace;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+.sb h3{font-size:.76rem;margin-bottom:.1rem}
+.sb p{color:var(--t2);font-size:.68rem;line-height:1.6}
+
+/* LAB */
+.lab-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.lt{display:flex;gap:.3rem;margin-bottom:.5rem;flex-wrap:nowrap;justify-content:center;flex-shrink:0}
+.lt button{padding:4px 13px;border-radius:50px;border:1px solid rgba(0,229,255,.2);background:transparent;color:var(--t2);font-size:.7rem;font-weight:600;cursor:pointer;transition:.3s;font-family:'Poppins',sans-serif}
+.lt button:hover{border-color:var(--cy);color:var(--cy)}
+.lt button.on{background:linear-gradient(135deg,var(--cy),#007cf0);color:#000;border-color:transparent}
+.lp{display:none;flex:1;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;flex-direction:column;min-height:0}
+.lp.on{display:flex;animation:pin .35s ease}
+.lca{position:relative;flex:1;background:linear-gradient(180deg,#0d1235,#111640);overflow:hidden;min-height:0}
+.lco{padding:.55rem 1rem;background:var(--bg2);border-top:1px solid var(--bdr);flex-shrink:0}
+.cr{display:flex;gap:.7rem;align-items:center;flex-wrap:nowrap;margin-bottom:.4rem}
+.cg2{display:flex;flex-direction:column;gap:2px;flex:1;min-width:90px}
+.cg2 label{font-size:.57rem;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.8px}
+.cg2 input[type="range"]{-webkit-appearance:none;appearance:none;height:4px;border-radius:3px;background:rgba(0,229,255,.15);outline:none;width:100%}
+.cg2 input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--cy);cursor:pointer;box-shadow:0 0 5px rgba(0,229,255,.4)}
+.cv{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--cy)}
+.bl{padding:5px 13px;border-radius:7px;border:none;font-weight:700;font-size:.68rem;cursor:pointer;transition:.3s;font-family:'Poppins',sans-serif;white-space:nowrap}
+.bl.go{background:linear-gradient(135deg,var(--gn),#00b05c);color:#000}
+.bl.rs{background:rgba(255,0,110,.15);color:var(--mg);border:1px solid rgba(255,0,110,.3)}
+.bl:hover{transform:scale(1.05)}
+.dg{display:grid;grid-template-columns:repeat(auto-fit,minmax(78px,1fr));gap:.28rem;margin-top:.35rem}
+.dc{background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.1);border-radius:var(--rs);padding:.32rem .4rem;text-align:center}
+.dc .dl{font-size:.5rem;color:var(--t3);text-transform:uppercase;letter-spacing:.4px}
+.dc .dd{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--cy);margin-top:1px}
+/* Newton/Gesek ground */
+.sgr{position:absolute;bottom:0;width:100%;height:48px;background:linear-gradient(180deg,#1a2055,#0f1340);border-top:2px solid rgba(0,229,255,.2)}
+.sbox{position:absolute;width:54px;height:54px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.68rem;color:#000}
+/* Analisis */
+.ax{margin-top:.35rem;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.12);border-radius:var(--rs);padding:.45rem .7rem}
+.ax .al{font-size:.52rem;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:.18rem}
+.ax .at{color:var(--t2);font-size:.68rem;line-height:1.65}
+.ax strong{color:var(--cy)}
+
+/* QUIZ */
+.qc{flex:1;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;align-content:start}
+.qb{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r);padding:.72rem .85rem;transition:.3s}
+.qb:hover{border-color:rgba(0,229,255,.25)}
+.qn{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--cy);margin-bottom:.2rem;letter-spacing:1.5px}
+.qt{font-size:.7rem;font-weight:600;margin-bottom:.5rem;line-height:1.5}
+.qo{display:flex;flex-direction:column;gap:.25rem}
+.qi{display:flex;align-items:center;gap:6px;padding:5px 8px;background:rgba(0,0,0,.2);border:1px solid rgba(0,229,255,.1);border-radius:var(--rs);cursor:pointer;transition:.3s;font-size:.68rem}
+.qi:hover{background:rgba(0,229,255,.06);border-color:rgba(0,229,255,.2)}
+.qi.sel{background:rgba(0,229,255,.1);border-color:var(--cy);color:var(--cy)}
+.qi.ok{border-color:var(--gn)!important;background:rgba(0,230,118,.1)!important;color:var(--gn)!important}
+.qi.no{border-color:var(--mg)!important;background:rgba(255,0,110,.08)!important;color:var(--mg)!important}
+.qr{width:12px;height:12px;border:2px solid var(--t3);border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.3s}
+.qi.sel .qr{border-color:var(--cy)}
+.qi.sel .qr::after{content:'';width:5px;height:5px;background:var(--cy);border-radius:50%}
+.qi.ok .qr{border-color:var(--gn)}
+.qi.ok .qr::after{content:'';width:5px;height:5px;background:var(--gn);border-radius:50%}
+.quiz-bottom{display:flex;align-items:center;gap:.9rem;flex-shrink:0;padding-top:.3rem}
+.sa{flex-shrink:0}
+.bp{background:linear-gradient(135deg,var(--cy),#007cf0);color:#000;padding:7px 20px;border-radius:50px;font-weight:700;font-size:.73rem;border:none;cursor:pointer;transition:.3s;font-family:'Poppins',sans-serif;display:inline-flex;align-items:center;gap:5px}
+.bp:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,229,255,.3)}
+.rc{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r);padding:.8rem 1.1rem;flex:1;display:none;align-items:center;gap:1.1rem}
+.rc.on{display:flex}
+.rs2{font-family:'Space Mono',monospace;font-size:1.8rem;font-weight:700;color:var(--cy);white-space:nowrap}
+.rl{color:var(--t2);font-size:.7rem}
+.rbar{width:100%;height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin-top:.45rem;overflow:hidden}
+.rbar-f{height:100%;border-radius:3px;transition:width 1s ease}
+.rmsg{margin-top:.45rem;color:var(--t2);line-height:1.6;font-size:.72rem}
+.rc-info{flex:1}
+.pf{text-align:center;color:var(--t3);font-size:.57rem;border-top:1px solid var(--bdr);padding:.25rem 0;flex-shrink:0}
+.toast{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:1px solid var(--gn);border-radius:var(--rs);padding:5px 13px;color:var(--gn);font-size:.7rem;font-weight:600;z-index:300;opacity:0;transition:.4s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:rgba(0,229,255,.25);border-radius:3px}
+
+/* QUIZ — per nomor dgn animasi */
+.qstage{flex:1;display:flex;flex-direction:column;min-height:0;position:relative}
+.qprog-wrap{display:flex;align-items:center;gap:.7rem;margin-bottom:.35rem;flex-shrink:0;padding:0 .3rem}
+.qprog-bar{flex:1;height:5px;background:rgba(0,229,255,.08);border-radius:3px;overflow:hidden}
+.qprog-fill{height:100%;background:linear-gradient(90deg,var(--cy),var(--mg));border-radius:3px;transition:width .55s cubic-bezier(.4,0,.2,1);width:10%;box-shadow:0 0 8px rgba(0,229,255,.4)}
+.qprog-num{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--cy);min-width:46px;text-align:right;font-weight:700}
+.qprog-dots{display:flex;gap:6px;justify-content:center;margin-bottom:.4rem;flex-shrink:0;flex-wrap:wrap}
+.qdot{width:8px;height:8px;border-radius:50%;background:rgba(0,229,255,.18);transition:.3s;cursor:pointer;border:none;padding:0}
+.qdot:hover{transform:scale(1.3);background:rgba(0,229,255,.4)}
+.qdot.cur{background:var(--cy);transform:scale(1.45);box-shadow:0 0 10px rgba(0,229,255,.6)}
+.qdot.ans{background:rgba(0,229,255,.55)}
+.qdot.ok{background:var(--gn);box-shadow:0 0 6px rgba(0,230,118,.5)}
+.qdot.no{background:var(--mg);box-shadow:0 0 6px rgba(255,0,110,.5)}
+
+.qview{flex:1;position:relative;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.qcard{position:absolute;width:94%;max-width:620px;background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--bdr);border-radius:14px;padding:.9rem 1.2rem 1rem;box-shadow:0 12px 40px rgba(0,0,0,.4);opacity:0;transform:translateX(70px) scale(.95);transition:opacity .45s cubic-bezier(.4,0,.2,1),transform .45s cubic-bezier(.4,0,.2,1);pointer-events:none}
+.qcard.cur{opacity:1;transform:translateX(0) scale(1);pointer-events:auto}
+.qcard.prev{opacity:0;transform:translateX(-70px) scale(.95)}
+.qcard.next{opacity:0;transform:translateX(70px) scale(.95)}
+.qcard .qn{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--cy);letter-spacing:1.6px;margin-bottom:.4rem;display:flex;align-items:center;gap:.55rem}
+.qcard .qn::before{content:'';width:20px;height:2px;background:linear-gradient(90deg,var(--cy),transparent);border-radius:2px}
+.qcard .qt{font-size:.85rem;font-weight:600;line-height:1.5;margin-bottom:.7rem;color:var(--t1)}
+.qcard .qo{display:flex;flex-direction:column;gap:.4rem}
+.qcard .qi{display:flex;align-items:center;gap:.65rem;padding:.5rem .8rem;background:rgba(0,0,0,.22);border:1.5px solid rgba(0,229,255,.12);border-radius:10px;cursor:pointer;transition:.25s;font-size:.74rem;font-weight:500}
+.qcard .qi:hover{background:rgba(0,229,255,.06);border-color:rgba(0,229,255,.32);transform:translateX(4px)}
+.qcard .qi.sel{background:rgba(0,229,255,.13);border-color:var(--cy);color:var(--cy)}
+.qcard .qi.ok{border-color:var(--gn)!important;background:rgba(0,230,118,.12)!important;color:var(--gn)!important}
+.qcard .qi.no{border-color:var(--mg)!important;background:rgba(255,0,110,.1)!important;color:var(--mg)!important}
+.qcard .qletter{width:22px;height:22px;min-width:22px;border-radius:6px;background:rgba(0,229,255,.12);color:var(--cy);font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center;transition:.25s}
+.qcard .qi.sel .qletter{background:var(--cy);color:#000}
+.qcard .qi.ok .qletter{background:var(--gn);color:#000}
+.qcard .qi.no .qletter{background:var(--mg);color:#fff}
+
+.qnav{display:flex;gap:.55rem;align-items:center;justify-content:center;padding-top:.45rem;flex-shrink:0}
+.qnav button{padding:6px 18px;border-radius:50px;border:1px solid rgba(0,229,255,.3);background:transparent;color:var(--cy);font-size:.7rem;font-weight:600;cursor:pointer;transition:.25s;font-family:'Poppins',sans-serif;display:inline-flex;align-items:center;gap:5px}
+.qnav button:hover:not(:disabled){background:rgba(0,229,255,.1);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,229,255,.2)}
+.qnav button:disabled{opacity:.28;cursor:not-allowed}
+.qnav .qsubmit{background:linear-gradient(135deg,var(--cy),#007cf0);color:#000;border-color:transparent;padding:7px 22px;font-weight:700}
+.qnav .qsubmit:hover{box-shadow:0 6px 18px rgba(0,229,255,.4)}
+
+/* result overlay */
+.qresult{position:absolute;inset:0;background:rgba(10,14,39,.88);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;z-index:60;animation:rfade .4s ease}
+.qresult.on{display:flex}
+@keyframes rfade{from{opacity:0}to{opacity:1}}
+.qresult-box{background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--bdr);border-radius:14px;padding:1.3rem 1.6rem 1.1rem;text-align:center;max-width:380px;width:90%;animation:rscale .55s cubic-bezier(.34,1.56,.64,1);box-shadow:0 20px 60px rgba(0,0,0,.6)}
+@keyframes rscale{from{opacity:0;transform:scale(.65)}to{opacity:1;transform:scale(1)}}
+.qresult-emoji{font-size:2.4rem;margin-bottom:.3rem;display:block;animation:bounce .8s ease}
+@keyframes bounce{0%,100%{transform:translateY(0)}40%{transform:translateY(-10px)}60%{transform:translateY(-5px)}}
+.qresult-score{font-family:'Space Mono',monospace;font-size:2.3rem;font-weight:700;color:var(--cy);line-height:1}
+.qresult-label{font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:1.6px;margin:.3rem 0 .55rem}
+.qresult-bar{width:100%;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin:.4rem 0 .75rem}
+.qresult-bar-f{height:100%;border-radius:3px;width:0%;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.qresult-msg{color:var(--t2);font-size:.72rem;line-height:1.55;margin-bottom:.85rem}
+.qresult-btns{display:flex;gap:.5rem;justify-content:center}
+.qresult-btns button{padding:7px 16px;border-radius:50px;border:none;font-size:.68rem;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:.25s}
+.qrestart{background:rgba(0,229,255,.15);color:var(--cy);border:1px solid rgba(0,229,255,.3)!important}
+.qreview{background:linear-gradient(135deg,var(--cy),#007cf0);color:#000}
+.qresult-btns button:hover{transform:translateY(-2px)}
+</style>
+</head>
+<body>
+<div id="root"><div id="app">
+<canvas id="particles"></canvas>
+
+<nav class="nav">
+  <div class="nav-brand" onclick="go('home')">⚛️ <span>LAB MAYA FISIKA</span></div>
+  <ul class="nav-links" id="nl">
+    <li><button data-p="tujuan" onclick="go('tujuan')">🎯 Tujuan</button></li>
+    <li><button data-p="materi" onclick="go('materi')">📖 Materi</button></li>
+    <li><button data-p="tatacara" onclick="go('tatacara')">📋 Tata Cara</button></li>
+    <li><button data-p="lab" onclick="go('lab')">🔬 Lab Maya</button></li>
+    <li><button data-p="refleksi" onclick="go('refleksi')">✍️ Refleksi</button></li>
+  </ul>
+  <div class="nav-r"><button class="snd" id="sndBtn" onclick="tglSnd()">🔊</button></div>
+</nav>
+
+<!-- HOME -->
+<div class="pg on" id="pg-home">
+  <div class="pi" style="justify-content:center">
+    <div class="hc">
+      <div class="hb">Fisika SMA • Kelas X</div>
+      <h1 style="font-family:'Playfair Display',serif">Dinamika:<br><span class="gw">Ragam Jenis Gaya</span></h1>
+      <p>Jelajahi dunia gaya dan gerak melalui simulasi interaktif. Pelajari Hukum Newton, gaya gesek, gaya pegas, dan gravitasi di laboratorium maya ini.</p>
+      <div class="hg">
+        <div class="hg-c" onclick="go('tujuan')"><div class="ic">🎯</div><h3>Tujuan</h3><p>Capaian belajar</p></div>
+        <div class="hg-c" onclick="go('materi')"><div class="ic">📖</div><h3>Materi</h3><p>Konsep & rumus</p></div>
+        <div class="hg-c" onclick="go('tatacara')"><div class="ic">📋</div><h3>Tata Cara</h3><p>Panduan lab</p></div>
+        <div class="hg-c" onclick="go('lab')"><div class="ic">🔬</div><h3>Lab Maya</h3><p>Simulasi interaktif</p></div>
+        <div class="hg-c" onclick="go('refleksi')"><div class="ic">✍️</div><h3>Refleksi</h3><p>Kuis pemahaman</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TUJUAN PEMBELAJARAN -->
+<div class="pg" id="pg-tujuan">
+  <div class="pi"><div class="pi-inner">
+    <div class="ph"><div class="ol">🎯 Capaian Pembelajaran</div><h1>Tujuan <span class="gw">Pembelajaran</span></h1><p>Setelah menyelesaikan modul ini, peserta didik diharapkan mampu mencapai kompetensi berikut.</p><div class="dv"></div></div>
+    <div class="tg">
+      <div class="tc"><div class="tnum">01</div><div class="tbody"><h3>⚖️ Memahami Konsep Gaya</h3><p>Mendeskripsikan pengertian gaya, jenis-jenisnya, serta pengaruhnya terhadap keadaan gerak dan diam suatu benda.</p></div></div>
+      <div class="tc"><div class="tnum">02</div><div class="tbody"><h3>🚀 Menganalisis Hukum Newton</h3><p>Menganalisis dan menerapkan Hukum I, II, dan III Newton dalam memecahkan masalah dinamika sehari-hari.</p></div></div>
+      <div class="tc"><div class="tnum">03</div><div class="tbody"><h3>🧲 Menguasai Gaya Gesek</h3><p>Membedakan gaya gesek statis dan kinetis, serta menghitung besar gaya gesek pada berbagai permukaan.</p></div></div>
+      <div class="tc"><div class="tnum">04</div><div class="tbody"><h3>🌀 Menerapkan Hukum Hooke</h3><p>Menganalisis gaya pegas dan gerak harmonik sederhana dengan menggunakan persamaan Hukum Hooke.</p></div></div>
+      <div class="tc"><div class="tnum">05</div><div class="tbody"><h3>🌍 Memahami Gravitasi</h3><p>Menjelaskan gaya gravitasi universal serta penerapannya pada gerak bandul sederhana dan benda jatuh.</p></div></div>
+      <div class="tc"><div class="tnum">06</div><div class="tbody"><h3>🔬 Bereksperimen Virtual</h3><p>Melakukan simulasi eksperimen di laboratorium maya, menganalisis data, dan menarik kesimpulan ilmiah.</p></div></div>
+    </div>
+    <div class="pf">Halaman 1 / 5 — Tujuan Pembelajaran</div>
+  </div></div>
+</div>
+
+<!-- MATERI -->
+<div class="pg" id="pg-materi">
+  <div class="pi"><div class="pi-inner">
+    <div class="ph"><div class="ol">📖 Modul Pembelajaran</div><h1><span class="gw">Ragam Jenis Gaya</span></h1><p>Klik setiap kartu untuk membuka materi lengkap dengan rumus dan contoh.</p><div class="dv"></div></div>
+    <div class="mg">
+      <div class="mc" onclick="om(0)"><div class="ci cc">⚖️</div><h3>Hukum Newton I (Inersia)</h3><p>Benda tetap diam atau GLB jika resultan gaya nol.</p></div>
+      <div class="mc" onclick="om(1)"><div class="ci cm">🚀</div><h3>Hukum Newton II (F = m·a)</h3><p>Percepatan sebanding gaya total, berbanding terbalik massa.</p></div>
+      <div class="mc" onclick="om(2)"><div class="ci cy2">🔄</div><h3>Hukum Newton III (Aksi-Reaksi)</h3><p>Gaya aksi = gaya reaksi, berlawanan arah.</p></div>
+      <div class="mc" onclick="om(3)"><div class="ci cg">🧲</div><h3>Gaya Gesek</h3><p>Gaya pada permukaan sentuh, berlawanan arah gerak.</p></div>
+      <div class="mc" onclick="om(4)"><div class="ci co">🌀</div><h3>Gaya Pegas (Hukum Hooke)</h3><p>Gaya pemulih sebanding simpangan pegas.</p></div>
+      <div class="mc" onclick="om(5)"><div class="ci cc">🌍</div><h3>Gaya Gravitasi</h3><p>Gaya tarik-menarik antar benda bermassa.</p></div>
+    </div>
+    <div class="pf">Halaman 2 / 5 — Materi</div>
+  </div></div>
+</div>
+<div class="mo" id="modal" onclick="if(event.target===this)cm()"><div class="mb"><button class="mx" onclick="cm()">✕</button><div id="mbody"></div></div></div>
+
+<!-- TATA CARA -->
+<div class="pg" id="pg-tatacara">
+  <div class="pi"><div class="pi-inner">
+    <div class="ph"><div class="ol">📋 Panduan</div><h1>Tata Cara <span class="gw">Lab Maya</span></h1><p>Ikuti langkah berikut agar pengalaman belajar maksimal.</p><div class="dv"></div></div>
+    <div class="sl">
+      <div class="si"><div class="sn">1</div><div class="sb"><h3>Pelajari Materi Terlebih Dahulu</h3><p>Buka halaman <strong>Materi</strong>, klik kartu untuk memahami konsep, rumus, dan prinsip gaya.</p></div></div>
+      <div class="si"><div class="sn">2</div><div class="sb"><h3>Pilih Simulasi di Lab Maya</h3><p>Buka <strong>Lab Maya</strong>, pilih tab: Hukum Newton II, Gaya Gesek, Gaya Pegas, atau Bandul.</p></div></div>
+      <div class="si"><div class="sn">3</div><div class="sb"><h3>Atur Parameter Eksperimen</h3><p>Geser slider untuk mengubah massa, gaya, koefisien gesek, konstanta pegas, dll.</p></div></div>
+      <div class="si"><div class="sn">4</div><div class="sb"><h3>Jalankan & Amati Simulasi</h3><p>Tekan <strong>▶ Mulai</strong>, amati pergerakan objek dan data real-time yang berubah.</p></div></div>
+      <div class="si"><div class="sn">5</div><div class="sb"><h3>Analisis & Catat Hasil</h3><p>Bandingkan hasil simulasi dengan teori. Ubah parameter, ulangi, cari pola.</p></div></div>
+      <div class="si"><div class="sn">6</div><div class="sb"><h3>Kerjakan Refleksi</h3><p>Buka halaman <strong>Refleksi</strong> untuk mengerjakan 10 soal kuis pilihan ganda.</p></div></div>
+    </div>
+    <div class="pf">Halaman 3 / 5 — Tata Cara</div>
+  </div></div>
+</div>
+
+<!-- LAB MAYA -->
+<div class="pg" id="pg-lab">
+  <div class="pi"><div class="pi-inner">
+    <div class="ph"><div class="ol">🔬 Laboratorium Virtual</div><h1>Lab Maya <span class="gw">Interaktif</span></h1><p>Pilih simulasi, atur parameter, amati gaya bekerja secara real-time.</p><div class="dv"></div></div>
+    <div class="lab-wrap">
+      <div class="lt">
+        <button class="on" onclick="slab('newton',this)">⚡ Hukum Newton II</button>
+        <button onclick="slab('gesek',this)">🧲 Gaya Gesek</button>
+        <button onclick="slab('pegas',this)">🌀 Gaya Pegas</button>
+        <button onclick="slab('bandul',this)">🕐 Bandul</button>
+      </div>
+
+      <!-- Newton -->
+      <div class="lp on" id="lp-newton">
+        <div class="lca" id="nc">
+          <div class="sgr"></div>
+          <div class="sbox" id="nb" style="bottom:48px;background:linear-gradient(135deg,var(--cy),#007cf0);box-shadow:0 3px 15px rgba(0,229,255,.3)"><span id="nml">5kg</span></div>
+        </div>
+        <div class="lco">
+          <div class="cr">
+            <div class="cg2"><label>Massa (kg)</label><input type="range" min="1" max="20" value="5" id="nm" oninput="uN()"><span class="cv" id="nmv">5 kg</span></div>
+            <div class="cg2"><label>Gaya Dorong (N)</label><input type="range" min="0" max="100" value="30" id="nf" oninput="uN()"><span class="cv" id="nfv">30 N</span></div>
+            <div style="display:flex;gap:5px;align-items:flex-end;flex-shrink:0"><button class="bl go" onclick="sN()">▶ Mulai</button><button class="bl rs" onclick="rN()">↺ Reset</button></div>
+          </div>
+          <div class="dg">
+            <div class="dc"><div class="dl">Percepatan</div><div class="dd" id="na">6.00 m/s²</div></div>
+            <div class="dc"><div class="dl">Kecepatan</div><div class="dd" id="nv">0 m/s</div></div>
+            <div class="dc"><div class="dl">Jarak</div><div class="dd" id="ns">0 m</div></div>
+            <div class="dc"><div class="dl">Waktu</div><div class="dd" id="nt">0 s</div></div>
+            <div class="dc"><div class="dl">Gaya Netto</div><div class="dd" id="nn">30 N</div></div>
+          </div>
+          <div class="ax"><div class="al">💡 Analisis</div><div class="at" id="nax">–</div></div>
+        </div>
+      </div>
+
+      <!-- Gesek -->
+      <div class="lp" id="lp-gesek">
+        <div class="lca" id="gc">
+          <div class="sgr" style="border-top-color:rgba(255,145,0,.3)"></div>
+          <div class="sbox" id="gb" style="bottom:48px;background:linear-gradient(135deg,var(--or),#cc7400);box-shadow:0 3px 15px rgba(255,145,0,.25)"><span id="gml">5kg</span></div>
+        </div>
+        <div class="lco">
+          <div class="cr">
+            <div class="cg2"><label>Massa (kg)</label><input type="range" min="1" max="20" value="5" id="gm" oninput="uGe()"><span class="cv" id="gmv">5 kg</span></div>
+            <div class="cg2"><label>Gaya Dorong (N)</label><input type="range" min="0" max="150" value="30" id="gf" oninput="uGe()"><span class="cv" id="gfv">30 N</span></div>
+            <div class="cg2"><label>Koefisien Gesek (μ)</label><input type="range" min="0" max="1" value="0.3" step="0.05" id="gmu" oninput="uGe()"><span class="cv" id="gmuv">0.30</span></div>
+            <div style="display:flex;gap:5px;align-items:flex-end;flex-shrink:0"><button class="bl go" onclick="sGe()">▶ Mulai</button><button class="bl rs" onclick="rGe()">↺ Reset</button></div>
+          </div>
+          <div class="dg">
+            <div class="dc"><div class="dl">Gaya Normal</div><div class="dd" id="gdn">49.0 N</div></div>
+            <div class="dc"><div class="dl">Gaya Gesek</div><div class="dd" id="gdg">14.7 N</div></div>
+            <div class="dc"><div class="dl">Gaya Netto</div><div class="dd" id="gdf">15.3 N</div></div>
+            <div class="dc"><div class="dl">Percepatan</div><div class="dd" id="gda">3.06 m/s²</div></div>
+            <div class="dc"><div class="dl">Kecepatan</div><div class="dd" id="gdv">0 m/s</div></div>
+            <div class="dc"><div class="dl">Status</div><div class="dd" id="gds" style="color:var(--gn)">Siap</div></div>
+          </div>
+          <div class="ax"><div class="al">💡 Analisis</div><div class="at" id="gax">–</div></div>
+        </div>
+      </div>
+
+      <!-- Pegas: entirely canvas-rendered -->
+      <div class="lp" id="lp-pegas">
+        <div class="lca" id="pc">
+          <canvas id="spC" style="position:absolute;top:0;left:0;width:100%;height:100%"></canvas>
+        </div>
+        <div class="lco">
+          <div class="cr">
+            <div class="cg2"><label>Massa (kg)</label><input type="range" min="0.5" max="5" value="1" step="0.5" id="pm" oninput="uPe()"><span class="cv" id="pmv">1.0 kg</span></div>
+            <div class="cg2"><label>Konstanta k (N/m)</label><input type="range" min="10" max="100" value="40" step="5" id="pk" oninput="uPe()"><span class="cv" id="pkv">40 N/m</span></div>
+            <div class="cg2"><label>Simpangan Awal (m)</label><input type="range" min="0.1" max="1" value="0.5" step="0.1" id="px0" oninput="uPe()"><span class="cv" id="px0v">0.5 m</span></div>
+            <div style="display:flex;gap:5px;align-items:flex-end;flex-shrink:0"><button class="bl go" onclick="sPe()">▶ Mulai</button><button class="bl rs" onclick="rPe()">↺ Reset</button></div>
+          </div>
+          <div class="dg">
+            <div class="dc"><div class="dl">Simpangan</div><div class="dd" id="pdx">0.500 m</div></div>
+            <div class="dc"><div class="dl">Gaya Pegas</div><div class="dd" id="pdf">-20.00 N</div></div>
+            <div class="dc"><div class="dl">Kecepatan</div><div class="dd" id="pdv">0.000 m/s</div></div>
+            <div class="dc"><div class="dl">Periode</div><div class="dd" id="pdt">0.99 s</div></div>
+            <div class="dc"><div class="dl">Ek</div><div class="dd" id="pde">0.00 J</div></div>
+            <div class="dc"><div class="dl">Ep</div><div class="dd" id="pdp">5.00 J</div></div>
+          </div>
+          <div class="ax"><div class="al">💡 Analisis</div><div class="at" id="pax">–</div></div>
+        </div>
+      </div>
+
+      <!-- Bandul -->
+      <div class="lp" id="lp-bandul">
+        <div class="lca" id="bc">
+          <canvas id="bC" style="position:absolute;top:0;left:0;width:100%;height:100%"></canvas>
+        </div>
+        <div class="lco">
+          <div class="cr">
+            <div class="cg2"><label>Panjang Tali (m)</label><input type="range" min="0.5" max="3" value="1.5" step="0.1" id="bl2" oninput="uBa()"><span class="cv" id="blv">1.5 m</span></div>
+            <div class="cg2"><label>Sudut Awal (°)</label><input type="range" min="5" max="45" value="20" id="ba" oninput="uBa()"><span class="cv" id="bav">20°</span></div>
+            <div class="cg2"><label>Gravitasi (m/s²)</label><input type="range" min="1" max="20" value="9.8" step="0.1" id="bg2" oninput="uBa()"><span class="cv" id="bgv">9.8 m/s²</span></div>
+            <div style="display:flex;gap:5px;align-items:flex-end;flex-shrink:0"><button class="bl go" onclick="sBa()">▶ Mulai</button><button class="bl rs" onclick="rBa()">↺ Reset</button></div>
+          </div>
+          <div class="dg">
+            <div class="dc"><div class="dl">Sudut (θ)</div><div class="dd" id="bda">20.0°</div></div>
+            <div class="dc"><div class="dl">Kecepatan</div><div class="dd" id="bdv">0 m/s</div></div>
+            <div class="dc"><div class="dl">Periode</div><div class="dd" id="bdt">2.46 s</div></div>
+            <div class="dc"><div class="dl">Tegangan</div><div class="dd" id="bdn">0 N</div></div>
+            <div class="dc"><div class="dl">Ek</div><div class="dd" id="bde">0 J</div></div>
+            <div class="dc"><div class="dl">Ep</div><div class="dd" id="bdp">0 J</div></div>
+          </div>
+          <div class="ax"><div class="al">💡 Analisis</div><div class="at" id="bax">–</div></div>
+        </div>
+      </div>
+    </div><!-- lab-wrap -->
+    <div class="pf">Halaman 4 / 5 — Lab Maya</div>
+  </div></div>
+</div>
+
+<!-- REFLEKSI -->
+<div class="pg" id="pg-refleksi">
+  <div class="pi"><div class="pi-inner">
+    <div class="ph"><div class="ol">✍️ Evaluasi</div><h1>Refleksi & <span class="gw">Kuis</span></h1><p>Jawab 10 soal pilihan ganda satu per satu. Gunakan navigasi untuk berpindah soal.</p><div class="dv"></div></div>
+    <div class="qstage">
+      <div class="qprog-wrap">
+        <div class="qprog-bar"><div class="qprog-fill" id="qProgFill"></div></div>
+        <div class="qprog-num" id="qProgNum">1 / 10</div>
+      </div>
+      <div class="qprog-dots" id="qDots"></div>
+      <div class="qview" id="qWrap"></div>
+      <div class="qnav">
+        <button id="qBack" onclick="prevQ()">← Sebelumnya</button>
+        <button id="qFwd" onclick="nextQ()">Selanjutnya →</button>
+        <button id="qSubmit" class="qsubmit" onclick="subQ()" style="display:none">📊 Periksa Jawaban</button>
+      </div>
+      <div class="qresult" id="qResult">
+        <div class="qresult-box">
+          <span class="qresult-emoji" id="qrEmoji">🌟</span>
+          <div class="qresult-score" id="qrScore">0/10</div>
+          <div class="qresult-label">Skor Anda</div>
+          <div class="qresult-bar"><div class="qresult-bar-f" id="qrBar"></div></div>
+          <div class="qresult-msg" id="qrMsg"></div>
+          <div class="qresult-btns">
+            <button class="qrestart" onclick="restartQuiz()">↺ Ulangi</button>
+            <button class="qreview" onclick="reviewQuiz()">👁 Tinjau Jawaban</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pf">Halaman 5 / 5 — Refleksi</div>
+  </div></div>
+</div>
+
+<div class="toast" id="tst"></div>
+</div></div><!-- #app #root -->
+
+<script>
+'use strict';
+
+/* ── SOUND ─────────────────────────────────────────────── */
+let _ax=null,sOn=true;
+function ac(){if(!_ax)_ax=new(window.AudioContext||window.webkitAudioContext)();return _ax}
+function tn(f,d,t='sine',v=.08){if(!sOn)return;try{const c=ac(),o=c.createOscillator(),g=c.createGain();o.type=t;o.frequency.setValueAtTime(f,c.currentTime);g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d)}catch(e){}}
+function sfC(){tn(800,.06,'sine',.06);setTimeout(()=>tn(1200,.04,'sine',.04),30)}
+function sfS(){tn(523,.1,'sine',.08);setTimeout(()=>tn(659,.1,'sine',.08),80);setTimeout(()=>tn(784,.12,'sine',.08),160)}
+function sfW(){tn(523,.12);setTimeout(()=>tn(659,.12),90);setTimeout(()=>tn(784,.12),180);setTimeout(()=>tn(1047,.22),270)}
+function sfB(){tn(200,.1,'triangle',.07)}
+function sfT(){tn(1000,.02,'square',.03)}
+function sfE(){tn(200,.2,'sawtooth',.05)}
+function tglSnd(){sOn=!sOn;const b=document.getElementById('sndBtn');b.textContent=sOn?'🔊':'🔇';b.classList.toggle('off',!sOn);if(sOn)sfC()}
+
+/* ── PARTICLES ──────────────────────────────────────────── */
+const pv=document.getElementById('particles'),pctx=pv.getContext('2d');let pp=[];
+function rPar(){pv.width=document.getElementById('app').offsetWidth;pv.height=document.getElementById('app').offsetHeight}
+rPar();
+for(let i=0;i<38;i++)pp.push({x:Math.random()*pv.width,y:Math.random()*pv.height,r:Math.random()*1.5+.3,dx:(Math.random()-.5)*.18,dy:(Math.random()-.5)*.18,a:Math.random()*.22+.04});
+(function dP(){pctx.clearRect(0,0,pv.width,pv.height);pp.forEach(p=>{pctx.beginPath();pctx.arc(p.x,p.y,p.r,0,Math.PI*2);pctx.fillStyle=`rgba(0,229,255,${p.a})`;pctx.fill();p.x+=p.dx;p.y+=p.dy;if(p.x<0)p.x=pv.width;if(p.x>pv.width)p.x=0;if(p.y<0)p.y=pv.height;if(p.y>pv.height)p.y=0});for(let i=0;i<pp.length;i++)for(let j=i+1;j<pp.length;j++){const dx=pp[i].x-pp[j].x,dy=pp[i].y-pp[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<75){pctx.beginPath();pctx.moveTo(pp[i].x,pp[i].y);pctx.lineTo(pp[j].x,pp[j].y);pctx.strokeStyle=`rgba(0,229,255,${.03*(1-d/75)})`;pctx.stroke()}}requestAnimationFrame(dP)})();
+
+/* ── NAV ────────────────────────────────────────────────── */
+function go(p){
+  sfC();
+  document.querySelectorAll('.pg').forEach(e=>e.classList.remove('on'));
+  document.getElementById('pg-'+p).classList.add('on');
+  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));
+  stopAll();
+  if(p==='lab')setTimeout(initLab,100);
+}
+function stopAll(){rN();rGe();rPe();rBa()}
+
+/* ── MATERI MODAL ───────────────────────────────────────── */
+const MD=[
+  {t:'⚖️ Hukum Newton I — Inersia',c:'<h3>Pengertian</h3><p>Setiap benda tetap diam atau bergerak lurus beraturan kecuali ada gaya luar yang mengubah keadaannya. Sifat ini disebut <strong>inersia</strong>.</p><div class="fb">ΣF = 0 → benda diam atau GLB</div><h3>Konsep Penting</h3><ul><li>Benda diam cenderung tetap diam</li><li>Benda bergerak cenderung tetap bergerak</li><li>Inersia sebanding dengan massa</li></ul><h3>Contoh</h3><ul><li>Sabuk pengaman kendaraan</li><li>Taplak meja ditarik cepat</li><li>Astronot melayang di luar angkasa</li></ul>'},
+  {t:'🚀 Hukum Newton II — F = m·a',c:'<h3>Pengertian</h3><p>Percepatan berbanding lurus dengan resultan gaya dan berbanding terbalik dengan massa.</p><div class="fb">ΣF = m × a</div><h3>Variabel</h3><ul><li><strong>ΣF</strong> = Resultan gaya (N)</li><li><strong>m</strong> = Massa (kg)</li><li><strong>a</strong> = Percepatan (m/s²)</li></ul><h3>Hubungan</h3><ul><li>F↑ m tetap → a↑</li><li>m↑ F tetap → a↓</li></ul><p>🔬 Cobalah di Lab Maya!</p>'},
+  {t:'🔄 Hukum Newton III — Aksi-Reaksi',c:'<h3>Pengertian</h3><p>Jika A memberi gaya pada B, maka B memberi gaya sama besar berlawanan arah pada A.</p><div class="fb">F_aksi = −F_reaksi</div><h3>Sifat</h3><ul><li>Sama besar, berlawanan arah</li><li>Bekerja pada <strong>dua benda berbeda</strong></li><li>Terjadi bersamaan & sejenis</li></ul><h3>Contoh</h3><ul><li>Kaki dorong tanah → tanah dorong kaki</li><li>Roket semburkan gas → gas dorong roket</li></ul>'},
+  {t:'🧲 Gaya Gesek',c:'<h3>Pengertian</h3><p>Gaya pada permukaan sentuh, arah berlawanan gerak.</p><div class="fb">f = μ × N</div><h3>Jenis</h3><ul><li><strong>Statis</strong>: benda belum bergerak, 0 ≤ fs ≤ μs·N</li><li><strong>Kinetis</strong>: benda bergerak, fk = μk·N</li><li>Umumnya μs > μk</li></ul><h3>Variabel</h3><ul><li>μ = koefisien gesek</li><li>N = gaya normal, di bidang datar: N = mg</li></ul>'},
+  {t:'🌀 Gaya Pegas — Hukum Hooke',c:'<h3>Pengertian</h3><p>Gaya pemulih pegas sebanding simpangan.</p><div class="fb">F = −k × x</div><h3>Variabel</h3><ul><li>k = konstanta pegas (N/m)</li><li>x = simpangan (m)</li></ul><h3>Periode</h3><div class="fb">T = 2π √(m/k)</div><h3>Energi Potensial</h3><div class="fb">Ep = ½kx²</div>'},
+  {t:'🌍 Gaya Gravitasi',c:'<h3>Gravitasi Universal</h3><div class="fb">F = G × m₁m₂ / r²</div><h3>Variabel</h3><ul><li>G = 6.674×10⁻¹¹ N·m²/kg²</li><li>r = jarak antar pusat massa</li></ul><h3>Percepatan Gravitasi</h3><div class="fb">g = GM/R² ≈ 9.8 m/s²</div><h3>Bandul</h3><div class="fb">T = 2π √(L/g)</div><p>Periode bergantung L dan g, <strong>tidak massa</strong>.</p>'}
+];
+function om(i){sfC();document.getElementById('mbody').innerHTML='<h2>'+MD[i].t+'</h2>'+MD[i].c;document.getElementById('modal').classList.add('on')}
+function cm(){sfC();document.getElementById('modal').classList.remove('on')}
+
+/* ── LAB TABS ───────────────────────────────────────────── */
+function slab(n,btn){
+  sfC();
+  document.querySelectorAll('.lp').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.lt button').forEach(t=>t.classList.remove('on'));
+  document.getElementById('lp-'+n).classList.add('on');
+  btn.classList.add('on');
+  stopAll();
+  setTimeout(()=>{
+    if(n==='newton')initNewton();
+    else if(n==='gesek')initGesek();
+    else if(n==='pegas')initPegas();
+    else if(n==='bandul')initBandul();
+  },50);
+}
+function initLab(){initNewton();initGesek();initPegas();initBandul()}
+
+/* ── HELPERS ────────────────────────────────────────────── */
+function fmt(n,d=2){return(isFinite(n)&&n!==null)?Number(n).toFixed(d):'0.'+('0'.repeat(d))}
+function toast(m){const t=document.getElementById('tst');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),3000)}
+function syncCanvas(cv,ar){cv.width=ar.offsetWidth||cv.offsetWidth||300;cv.height=ar.offsetHeight||cv.offsetHeight||120}
+
+/* ── NEWTON II ──────────────────────────────────────────── */
+let nAn=null,nSt={o:false,t:0,v:0,s:0};
+
+function initNewton(){
+  const con=document.getElementById('nc'),blk=document.getElementById('nb');
+  blk.style.left=Math.round(con.offsetWidth*0.08)+'px';
+  uN();
+}
+function uN(){
+  const m=+document.getElementById('nm').value,F=+document.getElementById('nf').value;
+  document.getElementById('nmv').textContent=m+' kg';
+  document.getElementById('nfv').textContent=F+' N';
+  document.getElementById('nml').textContent=m+'kg';
+  const a=F>0?F/m:0;
+  document.getElementById('na').textContent=a.toFixed(2)+' m/s²';
+  document.getElementById('nn').textContent=F+' N';
+  upNax(m,F,a,nSt.v,nSt.s,nSt.t);
+}
+function sN(){
+  if(nSt.o)return;
+  nSt.o=true;sfS();
+  const m=+document.getElementById('nm').value,F=+document.getElementById('nf').value,a=F/m;
+  const con=document.getElementById('nc'),blk=document.getElementById('nb');
+  const cw=con.offsetWidth,bw=blk.offsetWidth;
+  const x0=Math.round(cw*0.08);
+  let lt=performance.now();
+  (function loop(now){
+    const dt=Math.min((now-lt)/1000,.04);lt=now;
+    nSt.t+=dt;nSt.v+=a*dt;nSt.s+=nSt.v*dt;
+    const px=x0+nSt.s*28;
+    if(px<cw-bw-4){blk.style.left=px+'px'}
+    else{blk.style.left=(cw-bw-4)+'px';nSt.o=false;sfB();toast('Benda mencapai batas!');return}
+    document.getElementById('nv').textContent=nSt.v.toFixed(2)+' m/s';
+    document.getElementById('ns').textContent=nSt.s.toFixed(2)+' m';
+    document.getElementById('nt').textContent=nSt.t.toFixed(2)+' s';
+    upNax(m,F,a,nSt.v,nSt.s,nSt.t);
+    nAn=requestAnimationFrame(loop);
+  })(performance.now());
+}
+function rN(){
+  nSt={o:false,t:0,v:0,s:0};
+  if(nAn){cancelAnimationFrame(nAn);nAn=null}
+  const con=document.getElementById('nc'),blk=document.getElementById('nb');
+  blk.style.left=Math.round(con.offsetWidth*0.08)+'px';
+  document.getElementById('nv').textContent='0 m/s';
+  document.getElementById('ns').textContent='0 m';
+  document.getElementById('nt').textContent='0 s';
+  uN();
+}
+function upNax(m,F,a,v,s,t){
+  document.getElementById('nax').innerHTML=F>0
+    ?`Massa <strong>${fmt(m,0)} kg</strong>, gaya <strong>${fmt(F,0)} N</strong> → a = <strong>${fmt(a)} m/s²</strong>. Saat t = <strong>${fmt(t)} s</strong>: v = <strong>${fmt(v)} m/s</strong>, s = <strong>${fmt(s)} m</strong>.`
+    :`Gaya = 0 N → benda <strong>tidak bergerak</strong>. Sesuai Hukum Newton I: tanpa gaya netto, percepatan = 0.`;
+}
+
+/* ── GESEK ──────────────────────────────────────────────── */
+let gAn=null,gSt={o:false,t:0,v:0,s:0};
+
+function initGesek(){
+  const con=document.getElementById('gc'),blk=document.getElementById('gb');
+  blk.style.left=Math.round(con.offsetWidth*0.08)+'px';
+  uGe();
+}
+function uGe(){
+  const m=+document.getElementById('gm').value,F=+document.getElementById('gf').value,mu=+document.getElementById('gmu').value;
+  document.getElementById('gmv').textContent=m+' kg';
+  document.getElementById('gfv').textContent=F+' N';
+  document.getElementById('gmuv').textContent=mu.toFixed(2);
+  document.getElementById('gml').textContent=m+'kg';
+  const N=m*9.8,fg=mu*N,fn=Math.max(0,F-fg),a=F>fg?fn/m:0;
+  document.getElementById('gdn').textContent=N.toFixed(1)+' N';
+  document.getElementById('gdg').textContent=fg.toFixed(1)+' N';
+  document.getElementById('gdf').textContent=fn.toFixed(1)+' N';
+  document.getElementById('gda').textContent=a.toFixed(2)+' m/s²';
+  const st=document.getElementById('gds');
+  st.textContent=F>fg?'Akan Bergerak':'Diam';
+  st.style.color=F>fg?'var(--gn)':'var(--mg)';
+  upGax(m,F,mu,N,fg,fn,a,gSt.v,F>fg&&gSt.o);
+}
+function sGe(){
+  if(gSt.o)return;
+  const m=+document.getElementById('gm').value,F=+document.getElementById('gf').value,mu=+document.getElementById('gmu').value;
+  const Nm=m*9.8,fg=mu*Nm;
+  if(F<=fg){upGax(m,F,mu,Nm,fg,0,0,0,false);toast('Gaya ≤ gesek, benda diam!');sfE();return}
+  gSt.o=true;sfS();
+  const a=(F-fg)/m;
+  const con=document.getElementById('gc'),blk=document.getElementById('gb');
+  const cw=con.offsetWidth,bw=blk.offsetWidth;
+  const x0=Math.round(cw*0.08);
+  document.getElementById('gds').textContent='Bergerak';
+  document.getElementById('gds').style.color='var(--gn)';
+  let lt=performance.now();
+  (function loop(now){
+    const dt=Math.min((now-lt)/1000,.04);lt=now;
+    gSt.t+=dt;gSt.v+=a*dt;gSt.s+=gSt.v*dt;
+    const px=x0+gSt.s*28;
+    if(px<cw-bw-4){blk.style.left=px+'px'}
+    else{blk.style.left=(cw-bw-4)+'px';gSt.o=false;sfB();return}
+    document.getElementById('gdv').textContent=gSt.v.toFixed(2)+' m/s';
+    upGax(m,F,mu,Nm,fg,F-fg,a,gSt.v,true);
+    gAn=requestAnimationFrame(loop);
+  })(performance.now());
+}
+function rGe(){
+  gSt={o:false,t:0,v:0,s:0};
+  if(gAn){cancelAnimationFrame(gAn);gAn=null}
+  const con=document.getElementById('gc'),blk=document.getElementById('gb');
+  blk.style.left=Math.round(con.offsetWidth*0.08)+'px';
+  document.getElementById('gdv').textContent='0 m/s';
+  uGe();
+}
+function upGax(m,F,mu,N,fg,fn,a,v,moving){
+  document.getElementById('gax').innerHTML=moving
+    ?`Dorong <strong>${fmt(F,0)} N</strong> > gesek <strong>${fmt(fg,1)} N</strong> → netto <strong>${fmt(fn,1)} N</strong>, a = <strong>${fmt(a)} m/s²</strong>, v = <strong>${fmt(v)} m/s</strong>.`
+    :`Dorong <strong>${fmt(F,0)} N</strong> ≤ gesek <strong>${fmt(fg,1)} N</strong> → resultan = 0, balok <strong>diam</strong>. (μ=${fmt(mu,2)}, N=${fmt(N,1)} N)`;
+}
+
+/* ── PEGAS  (sepenuhnya di-render di canvas) ────────────── */
+let pAn=null,pSt={o:false,t:0,curX:0,curV:0},pLabel='1.0kg';
+
+function initPegas(){
+  const cv=document.getElementById('spC'),ar=document.getElementById('pc');
+  syncCanvas(cv,ar);
+  uPe();
+}
+
+/*
+  Layout (semua proporsi canvas):
+  - Dinding kiri: x = 0..wallW
+  - Titik keseimbangan (x=0): eqFrac dari kiri
+  - Blok: persegi panjang, pusatnya di (eqFrac + x_disp*scFrac)*W
+  - Skala: scFrac = pixel per meter / W  →  1 m = scFrac*W px
+*/
+function _pegas_draw(cv,x_m){
+  const W=cv.width,H=cv.height;
+  if(!W||!H)return;
+  const ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+
+  const wallW=Math.max(10,W*0.018);
+  const eqPx=W*0.38;          // equilibrium pixel x
+  const scPx=W*0.22;          // pixels per meter
+  const midY=H*0.5;
+  const bSz=Math.min(48,H*0.42,W*0.07);
+  const blobX=eqPx+x_m*scPx; // block center x
+
+  // Draw wall (fixed left)
+  ctx.fillStyle='#2a3060';
+  ctx.fillRect(0,H*0.15,wallW,H*0.7);
+  ctx.strokeStyle='rgba(160,166,214,0.35)';
+  ctx.lineWidth=1;
+  for(let y=H*0.18;y<H*0.82;y+=9){
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(wallW,y+7);ctx.stroke();
+  }
+
+  // Ground / floor line
+  ctx.strokeStyle='rgba(0,229,255,0.2)';
+  ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(wallW,H*0.85);ctx.lineTo(W,H*0.85);ctx.stroke();
+
+  // Equilibrium marker (dashed vertical)
+  ctx.save();
+  ctx.setLineDash([3,4]);
+  ctx.strokeStyle='rgba(0,229,255,0.3)';
+  ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(eqPx,H*0.1);ctx.lineTo(eqPx,H*0.84);ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle='rgba(0,229,255,0.5)';
+  ctx.font=`${Math.max(9,W*0.012)}px 'Space Mono',monospace`;
+  ctx.textAlign='center';
+  ctx.fillText('x=0',eqPx,H*0.08);
+  ctx.textAlign='left';
+
+  // Displacement arrow if x_m != 0
+  if(Math.abs(x_m)>0.02){
+    const arX1=eqPx,arX2=blobX-bSz/2*(x_m>0?1:-1)-2;
+    ctx.strokeStyle=x_m>0?'rgba(255,214,0,0.6)':'rgba(0,229,255,0.6)';
+    ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(arX1,midY-bSz/2-8);ctx.lineTo(arX2,midY-bSz/2-8);ctx.stroke();
+    ctx.fillStyle=x_m>0?'rgba(255,214,0,0.6)':'rgba(0,229,255,0.6)';
+    ctx.font=`${Math.max(8,W*0.011)}px 'Space Mono',monospace`;
+    ctx.textAlign='center';
+    ctx.fillText(fmt(x_m,2)+' m',(arX1+arX2)/2,midY-bSz/2-14);
+    ctx.textAlign='left';
+  }
+
+  // Spring (zigzag from wall to block left edge)
+  const sprX1=wallW+2,sprX2=blobX-bSz/2;
+  if(sprX2>sprX1+4){
+    const nCoils=12,amp=H*0.07;
+    ctx.beginPath();
+    ctx.strokeStyle='#6878b8';
+    ctx.lineWidth=2;
+    const segW=(sprX2-sprX1)/(nCoils*2);
+    ctx.moveTo(sprX1,midY);
+    for(let i=0;i<nCoils*2;i++){
+      ctx.lineTo(sprX1+segW*(i+1),midY+(i%2===0?-amp:amp));
+    }
+    ctx.lineTo(sprX2,midY);
+    ctx.stroke();
+  }
+
+  // Block
+  const bx=blobX-bSz/2,by=midY-bSz/2;
+  const grd=ctx.createLinearGradient(bx,by,bx+bSz,by+bSz);
+  grd.addColorStop(0,'#ffe040');grd.addColorStop(1,'#d4a000');
+  ctx.fillStyle=grd;
+  ctx.shadowColor='rgba(255,214,0,0.35)';ctx.shadowBlur=10;
+  ctx.beginPath();
+  if(ctx.roundRect)ctx.roundRect(bx,by,bSz,bSz,5);
+  else ctx.rect(bx,by,bSz,bSz);
+  ctx.fill();ctx.shadowBlur=0;
+  // Label on block
+  ctx.fillStyle='#000';
+  ctx.font=`bold ${Math.max(8,bSz*0.28)}px 'Poppins',sans-serif`;
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText(pLabel,blobX,midY);
+  ctx.textBaseline='alphabetic';ctx.textAlign='left';
+}
+
+function uPe(){
+  const m=+document.getElementById('pm').value;
+  const k=+document.getElementById('pk').value;
+  const x0=+document.getElementById('px0').value;
+  document.getElementById('pmv').textContent=m.toFixed(1)+' kg';
+  document.getElementById('pkv').textContent=k+' N/m';
+  document.getElementById('px0v').textContent=x0.toFixed(1)+' m';
+  pLabel=m.toFixed(1)+'kg';
+  const T=2*Math.PI*Math.sqrt(m/k);
+  const Fp=-k*x0,Ep=0.5*k*x0*x0;
+  document.getElementById('pdt').textContent=T.toFixed(2)+' s';
+  document.getElementById('pdx').textContent=x0.toFixed(3)+' m';
+  document.getElementById('pdf').textContent=Fp.toFixed(2)+' N';
+  document.getElementById('pdp').textContent=Ep.toFixed(2)+' J';
+  document.getElementById('pde').textContent='0.00 J';
+  document.getElementById('pdv').textContent='0.000 m/s';
+  // draw idle state
+  const cv=document.getElementById('spC'),ar=document.getElementById('pc');
+  if(ar.offsetWidth>0)syncCanvas(cv,ar);
+  _pegas_draw(cv,x0);
+  upPax(m,k,x0,0,0,Ep,T);
+}
+
+function sPe(){
+  if(pSt.o)return;
+  const cv=document.getElementById('spC'),ar=document.getElementById('pc');
+  syncCanvas(cv,ar);
+  const m=+document.getElementById('pm').value;
+  const k=+document.getElementById('pk').value;
+  const x0=+document.getElementById('px0').value;
+  const omega=Math.sqrt(k/m);
+  const T=2*Math.PI/omega;
+  // damping ratio (underdamped, dekat ke pendulum feel)
+  const zeta=0.05;
+  const cd=2*zeta*Math.sqrt(k*m);
+  pSt={o:true,t:0,curX:x0,curV:0,still:0};
+  let x=x0,v=0;
+  sfS();
+  let lt=performance.now(),tickT=0;
+  (function loop(now){
+    if(!pSt.o)return;
+    const dt=Math.min((now-lt)/1000,.04);lt=now;
+    pSt.t+=dt;
+    // Semi-implicit Euler dgn redaman: F = -kx - c*v
+    const a=(-k*x-cd*v)/m;
+    v+=a*dt;
+    x+=v*dt;
+    pSt.curX=x;pSt.curV=v;
+    const Fp=-k*x,Ek=0.5*m*v*v,Ep=0.5*k*x*x;
+    _pegas_draw(cv,x);
+    document.getElementById('pdx').textContent=x.toFixed(3)+' m';
+    document.getElementById('pdf').textContent=Fp.toFixed(2)+' N';
+    document.getElementById('pdv').textContent=v.toFixed(3)+' m/s';
+    document.getElementById('pde').textContent=Ek.toFixed(2)+' J';
+    document.getElementById('pdp').textContent=Ep.toFixed(2)+' J';
+    upPax(m,k,x,v,Ek,Ep,T,'run');
+    if(Math.abs(x)>x0*0.82&&now-tickT>180){sfT();tickT=now}
+    // Kondisi berhenti: x & v kecil bertahan
+    if(Math.abs(x)<0.006&&Math.abs(v)<0.012){pSt.still+=dt}else{pSt.still=0}
+    if(pSt.still>0.9){
+      pSt.o=false;
+      _pegas_draw(cv,0);
+      document.getElementById('pdx').textContent='0.000 m';
+      document.getElementById('pdf').textContent='0.00 N';
+      document.getElementById('pdv').textContent='0.000 m/s';
+      document.getElementById('pde').textContent='0.00 J';
+      document.getElementById('pdp').textContent='0.00 J';
+      upPax(m,k,0,0,0,0,T,'stop');
+      toast('Pegas berhenti di titik setimbang');
+      return;
+    }
+    pAn=requestAnimationFrame(loop);
+  })(performance.now());
+}
+
+function rPe(){
+  pSt.o=false;
+  if(pAn){cancelAnimationFrame(pAn);pAn=null}
+  uPe();
+}
+
+function upPax(m,k,x,v,Ek,Ep,T,state){
+  state=state||'idle';
+  const Em=Ek+Ep;
+  const x0=+document.getElementById('px0').value;
+  const Ep0=0.5*k*x0*x0;
+  let html;
+  if(state==='stop'){
+    html=`Pegas <strong>berhenti di titik setimbang</strong> akibat redaman. Energi mekanik awal <strong>${fmt(Ep0,2)} J</strong> berubah menjadi panas/disipasi. Periode teoritis tanpa redaman T = <strong>${fmt(T,2)} s</strong>.`;
+  }else if(state==='run'){
+    html=`x = <strong>${fmt(x,3)} m</strong>, F = <strong>${fmt(-k*x,2)} N</strong>, v = <strong>${fmt(v,3)} m/s</strong>. Ek = <strong>${fmt(Ek,2)} J</strong>, Ep = <strong>${fmt(Ep,2)} J</strong>, Em ≈ <strong>${fmt(Em,2)} J</strong>. T = <strong>${fmt(T,2)} s</strong>.`;
+  }else{
+    html=`Simpangan awal <strong>${fmt(x0,2)} m</strong>. Gaya pegas = <strong>${fmt(-k*x0,2)} N</strong>, Ep = <strong>${fmt(Ep0,2)} J</strong>. Periode T = <strong>${fmt(T,2)} s</strong>. Tekan ▶ Mulai untuk osilasi.`;
+  }
+  document.getElementById('pax').innerHTML=html;
+}
+
+/* ── BANDUL ─────────────────────────────────────────────── */
+let bAn=null,bSt={o:false,th:0,om:0,still:0};
+
+function initBandul(){
+  const cv=document.getElementById('bC'),ar=document.getElementById('bc');
+  if(ar.offsetWidth>0)syncCanvas(cv,ar);
+  uBa();
+}
+
+function uBa(){
+  const L=+document.getElementById('bl2').value;
+  const a=+document.getElementById('ba').value;
+  const g=+document.getElementById('bg2').value;
+  document.getElementById('blv').textContent=L.toFixed(1)+' m';
+  document.getElementById('bav').textContent=a+'°';
+  document.getElementById('bgv').textContent=g.toFixed(1)+' m/s²';
+  const T=2*Math.PI*Math.sqrt(L/g);
+  document.getElementById('bdt').textContent=T.toFixed(2)+' s';
+  document.getElementById('bda').textContent=a.toFixed(1)+'°';
+  document.getElementById('bdv').textContent='0 m/s';
+  const cv=document.getElementById('bC'),ar=document.getElementById('bc');
+  if(ar.offsetWidth>0)syncCanvas(cv,ar);
+  _dBS(cv,a,L,g);
+  const Ep=g*L*(1-Math.cos(a*Math.PI/180));
+  const ten=g*Math.cos(a*Math.PI/180);
+  upBax(L,g,a,0,T,ten,0,Ep);
+}
+
+function _bPivot(cv,L){
+  const W=cv.width,H=cv.height;
+  const cx=W/2,cy=H*0.12;
+  const maxRope=H*0.68;
+  const sc=Math.min(maxRope/Math.max(L,0.5),H*0.24);
+  const brad=Math.min(15,H*0.05);
+  return{cx,cy,ln:L*sc,brad};
+}
+
+function _dBS(cv,deg,L,g){
+  const W=cv.width,H=cv.height;
+  if(!W||!H)return;
+  const ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  const {cx,cy,ln,brad}=_bPivot(cv,L);
+  const th=deg*Math.PI/180;
+  const bx=cx+ln*Math.sin(th),by=cy+ln*Math.cos(th);
+
+  // Vertical reference
+  ctx.save();ctx.setLineDash([3,4]);
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx,cy+ln+brad+6);ctx.stroke();
+  ctx.restore();
+
+  // Arc shadow
+  if(Math.abs(deg)>0.5){
+    const a0=Math.PI/2,a1=Math.PI/2-th;
+    ctx.beginPath();ctx.arc(cx,cy,ln,Math.min(a0,a1),Math.max(a0,a1));
+    ctx.strokeStyle='rgba(0,229,255,0.06)';ctx.lineWidth=1;ctx.stroke();
+  }
+
+  // Pivot
+  ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);
+  ctx.fillStyle='#6b72a8';ctx.fill();
+
+  // String
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(bx,by);
+  ctx.strokeStyle='#9090c0';ctx.lineWidth=1.8;ctx.stroke();
+
+  // Bob
+  ctx.beginPath();ctx.arc(bx,by,brad,0,Math.PI*2);
+  const gr=ctx.createRadialGradient(bx-brad*.25,by-brad*.25,brad*.1,bx,by,brad);
+  gr.addColorStop(0,'#ff6090');gr.addColorStop(1,'#a0004a');
+  ctx.fillStyle=gr;ctx.shadowColor='rgba(255,0,110,.35)';ctx.shadowBlur=10;
+  ctx.fill();ctx.shadowBlur=0;
+
+  // Angle label
+  if(Math.abs(deg)>0.8){
+    ctx.fillStyle='rgba(0,229,255,0.65)';
+    ctx.font=`${Math.max(9,W*0.013)}px 'Space Mono',monospace`;
+    const lx=deg>=0?cx+32:cx-32-30;
+    ctx.fillText(Math.abs(deg).toFixed(1)+'°',lx,cy+22);
+  }
+}
+
+function sBa(){
+  if(bSt.o)return;
+  bSt.o=true;bSt.still=0;sfS();
+  const L=+document.getElementById('bl2').value;
+  const a0=+document.getElementById('ba').value;
+  const g=+document.getElementById('bg2').value;
+  bSt.th=a0*Math.PI/180;bSt.om=0;
+  const cv=document.getElementById('bC'),ar=document.getElementById('bc');
+  syncCanvas(cv,ar);
+  const ctx=cv.getContext('2d');
+  const {cx,cy,ln,brad}=_bPivot(cv,L);
+  const W=cv.width,H=cv.height;
+  const period=2*Math.PI*Math.sqrt(L/g);
+  let lt=performance.now(),tickT=0;
+  (function loop(now){
+    if(!bSt.o)return;
+    const dt=Math.min((now-lt)/1000,.04);lt=now;
+    // Runge-Kutta 4 for better accuracy
+    const deriv=(th,om)=>[om,-(g/L)*Math.sin(th)];
+    const [k1t,k1o]=deriv(bSt.th,bSt.om);
+    const [k2t,k2o]=deriv(bSt.th+k1t*dt/2,bSt.om+k1o*dt/2);
+    const [k3t,k3o]=deriv(bSt.th+k2t*dt/2,bSt.om+k2o*dt/2);
+    const [k4t,k4o]=deriv(bSt.th+k3t*dt,bSt.om+k3o*dt);
+    bSt.th+=(k1t+2*k2t+2*k3t+k4t)*dt/6;
+    bSt.om+=(k1o+2*k2o+2*k3o+k4o)*dt/6;
+    bSt.om*=0.9988; // gentle damping
+
+    const bx=cx+ln*Math.sin(bSt.th),by=cy+ln*Math.cos(bSt.th);
+    ctx.clearRect(0,0,W,H);
+    // ref line
+    ctx.save();ctx.setLineDash([3,4]);ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx,cy+ln+brad+6);ctx.stroke();ctx.restore();
+    // pivot
+    ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);ctx.fillStyle='#6b72a8';ctx.fill();
+    // string
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(bx,by);ctx.strokeStyle='#9090c0';ctx.lineWidth=1.8;ctx.stroke();
+    // bob
+    ctx.beginPath();ctx.arc(bx,by,brad,0,Math.PI*2);
+    const gr=ctx.createRadialGradient(bx-brad*.25,by-brad*.25,brad*.1,bx,by,brad);
+    gr.addColorStop(0,'#ff6090');gr.addColorStop(1,'#a0004a');
+    ctx.fillStyle=gr;ctx.shadowColor='rgba(255,0,110,.35)';ctx.shadowBlur=10;ctx.fill();ctx.shadowBlur=0;
+
+    const ad=bSt.th*180/Math.PI;
+    const vt=bSt.om*L;
+    const h=L*(1-Math.cos(bSt.th));
+    const Ek=0.5*vt*vt,Ep=g*h;
+    const tns=g*Math.cos(bSt.th)+vt*vt/L;
+    document.getElementById('bda').textContent=ad.toFixed(1)+'°';
+    document.getElementById('bdv').textContent=Math.abs(vt).toFixed(2)+' m/s';
+    document.getElementById('bdn').textContent=tns.toFixed(2)+' N';
+    document.getElementById('bde').textContent=Ek.toFixed(3)+' J';
+    document.getElementById('bdp').textContent=Ep.toFixed(3)+' J';
+    upBax(L,g,ad,vt,period,tns,Ek,Ep);
+    if(Math.abs(bSt.th)<0.022&&now-tickT>300){sfT();tickT=now}
+    if(Math.abs(bSt.th)<0.005&&Math.abs(vt)<0.008){bSt.still+=dt}else{bSt.still=0}
+    if(bSt.still>1.2){
+      bSt.o=false;bSt.th=0;bSt.om=0;
+      ['bda','bdv'].forEach((id,i)=>document.getElementById(id).textContent=i?'0.00 m/s':'0.0°');
+      document.getElementById('bdn').textContent=g.toFixed(2)+' N';
+      document.getElementById('bde').textContent='0.000 J';
+      document.getElementById('bdp').textContent='0.000 J';
+      _dBS(cv,0,L,g);
+      upBax(L,g,0,0,period,g,0,0);
+      toast('Bandul berhenti di titik setimbang');return;
+    }
+    bAn=requestAnimationFrame(loop);
+  })(performance.now());
+}
+
+function rBa(){
+  bSt={o:false,th:0,om:0,still:0};
+  if(bAn){cancelAnimationFrame(bAn);bAn=null}
+  ['bdv','bde','bdp','bdn'].forEach(id=>document.getElementById(id).textContent='0');
+  uBa();
+}
+
+function upBax(L,g,thDeg,v,T,ten,Ek,Ep){
+  const diam=Math.abs(thDeg)<0.05&&Math.abs(v)<0.01;
+  document.getElementById('bax').innerHTML=diam
+    ?`Bandul berhenti di titik setimbang. Periode teoritis <strong>${fmt(T,2)} s</strong>. Periode hanya bergantung pada panjang tali dan gravitasi, bukan massa.`
+    :`θ = <strong>${fmt(thDeg,1)}°</strong>, v = <strong>${fmt(Math.abs(v),2)} m/s</strong>, tegangan = <strong>${fmt(ten,2)} N</strong>. Ek = <strong>${fmt(Ek,3)} J</strong>, Ep = <strong>${fmt(Ep,3)} J</strong>. T = <strong>${fmt(T,2)} s</strong>.`;
+}
+
+/* ── QUIZ ───────────────────────────────────────────────── */
+const QD=[
+  {q:'Berdasarkan Hukum Newton II, jika gaya diperbesar 2× dan massa tetap, percepatan…',o:['Tetap sama','Menjadi 2 kali lipat','Menjadi ½ kali','Menjadi 4 kali lipat'],a:1},
+  {q:'Balok 10 kg di lantai kasar (μk=0.2) didorong 50 N horizontal. Percepatan? (g=10)',o:['5 m/s²','2 m/s²','3 m/s²','1 m/s²'],a:2},
+  {q:'Jika konstanta pegas (k) diperbesar, periode getaran…',o:['Bertambah besar','Mengecil (lebih cepat)','Tetap','Menjadi nol'],a:1},
+  {q:'Faktor yang memengaruhi periode bandul sederhana (sudut kecil):',o:['Panjang tali & gravitasi','Massa & sudut','Massa & panjang tali','Semua di atas'],a:0},
+  {q:'Hukum Newton I disebut juga hukum…',o:['Aksi-Reaksi','Gravitasi','Inersia (Kelembaman)','Kekekalan Energi'],a:2},
+  {q:'Pasangan gaya aksi-reaksi bekerja pada…',o:['Satu benda yang sama','Dua benda berbeda','Tiga benda','Benda & lingkungan'],a:1},
+  {q:'Gaya gesek statis maksimum terjadi saat…',o:['Benda sudah bergerak','Benda tepat akan bergerak','Benda diam tanpa gaya','Kecepatan maksimum'],a:1},
+  {q:'Rumus energi potensial elastis pegas:',o:['Ep = mgh','Ep = ½mv²','Ep = ½kx²','Ep = kx'],a:2},
+  {q:'Massa diperbesar 3× dengan gaya tetap, percepatan menjadi…',o:['3× lebih besar','⅓ dari semula','Tetap','9× lebih besar'],a:1},
+  {q:'Panjang tali bandul diperbesar 4×, periode menjadi…',o:['4× semula','2× semula','½× semula','Tetap'],a:1}
+];
+let uA=new Array(QD.length).fill(-1),curQ=0,quizSubmitted=false;
+
+function bQ(){
+  let dots='';
+  QD.forEach((_,i)=>{dots+=`<button class="qdot" onclick="goQ(${i})" id="qd${i}" aria-label="Soal ${i+1}"></button>`});
+  let cards='';
+  QD.forEach((q,i)=>{
+    cards+=`<div class="qcard" id="qc${i}"><div class="qn">SOAL ${String(i+1).padStart(2,'0')} DARI ${QD.length}</div><div class="qt">${q.q}</div><div class="qo">`;
+    q.o.forEach((o,j)=>{
+      const letter=String.fromCharCode(65+j);
+      cards+=`<div class="qi" onclick="pQ(this,${i},${j})"><div class="qletter">${letter}</div><span>${o}</span></div>`;
+    });
+    cards+='</div></div>';
+  });
+  document.getElementById('qWrap').innerHTML=cards;
+  document.getElementById('qDots').innerHTML=dots;
+  showQ(0);
+}
+
+function showQ(i){
+  curQ=Math.max(0,Math.min(QD.length-1,i));
+  document.querySelectorAll('.qcard').forEach((c,j)=>{
+    c.classList.remove('cur','prev','next');
+    if(j<curQ)c.classList.add('prev');
+    else if(j>curQ)c.classList.add('next');
+    else c.classList.add('cur');
+  });
+  document.querySelectorAll('.qdot').forEach((d,j)=>d.classList.toggle('cur',j===curQ));
+  document.getElementById('qProgFill').style.width=((curQ+1)/QD.length*100)+'%';
+  document.getElementById('qProgNum').textContent=(curQ+1)+' / '+QD.length;
+  document.getElementById('qBack').disabled=(curQ===0);
+  const isLast=(curQ===QD.length-1);
+  document.getElementById('qFwd').style.display=isLast?'none':'inline-flex';
+  document.getElementById('qSubmit').style.display=isLast?'inline-flex':'none';
+}
+function goQ(i){sfC();showQ(i)}
+function nextQ(){sfC();if(curQ<QD.length-1)showQ(curQ+1)}
+function prevQ(){sfC();if(curQ>0)showQ(curQ-1)}
+
+function pQ(el,i,j){
+  if(quizSubmitted)return;
+  sfC();
+  el.closest('.qo').querySelectorAll('.qi').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  uA[i]=j;
+  const dot=document.getElementById('qd'+i);
+  if(dot&&!dot.classList.contains('ok')&&!dot.classList.contains('no'))dot.classList.add('ans');
+}
+
+function subQ(){
+  const unanswered=uA.filter(x=>x===-1).length;
+  if(unanswered>0){
+    toast('Masih ada '+unanswered+' soal belum dijawab');
+    sfE();
+    const fi=uA.findIndex(x=>x===-1);
+    if(fi>=0)showQ(fi);
+    return;
+  }
+  sfW();
+  quizSubmitted=true;
+  let sc=0;
+  QD.forEach((q,i)=>{
+    const card=document.getElementById('qc'+i);
+    card.querySelectorAll('.qi').forEach((it,j)=>{
+      it.classList.remove('sel','ok','no');
+      if(j===q.a)it.classList.add('ok');
+      else if(j===uA[i])it.classList.add('no');
+    });
+    const dot=document.getElementById('qd'+i);
+    dot.classList.remove('ans','ok','no');
+    if(uA[i]===q.a){sc++;dot.classList.add('ok')}else dot.classList.add('no');
+  });
+  showResult(sc);
+}
+
+function showResult(sc){
+  const pct=Math.round(sc/QD.length*100);
+  const emoji=pct===100?'🏆':pct>=80?'🌟':pct>=60?'👏':pct>=40?'💪':'📚';
+  let msg;
+  if(pct===100)msg='Sempurna! Anda menguasai seluruh materi dinamika gaya!';
+  else if(pct>=80)msg='Hebat! Hampir sempurna. Tinjau soal yang kurang tepat.';
+  else if(pct>=60)msg='Cukup baik! Pelajari kembali konsep yang masih lemah.';
+  else if(pct>=40)msg='Perlu belajar lebih lanjut. Buka kembali halaman Materi.';
+  else msg='Jangan menyerah! Mulai dari halaman Materi dan ulangi kuis.';
+  const color=pct>=70?'var(--gn)':pct>=40?'var(--yl)':'var(--mg)';
+  document.getElementById('qrEmoji').textContent=emoji;
+  const sEl=document.getElementById('qrScore');
+  sEl.textContent='0/'+QD.length;
+  sEl.style.color=color;
+  // count-up animation
+  let cur=0;const dur=900,start=performance.now();
+  (function tick(now){
+    const p=Math.min((now-start)/dur,1);
+    cur=Math.round(p*sc);
+    sEl.textContent=cur+'/'+QD.length;
+    if(p<1)requestAnimationFrame(tick);
+  })(performance.now());
+  document.getElementById('qrMsg').textContent=msg;
+  const bar=document.getElementById('qrBar');
+  bar.style.width='0%';bar.style.background=color;
+  setTimeout(()=>{bar.style.width=pct+'%'},280);
+  document.getElementById('qResult').classList.add('on');
+}
+
+function restartQuiz(){
+  uA=new Array(QD.length).fill(-1);
+  quizSubmitted=false;
+  document.querySelectorAll('.qdot').forEach(d=>d.classList.remove('ok','no','ans'));
+  document.querySelectorAll('.qcard .qi').forEach(it=>it.classList.remove('sel','ok','no'));
+  document.getElementById('qResult').classList.remove('on');
+  showQ(0);
+  sfC();
+}
+function reviewQuiz(){
+  document.getElementById('qResult').classList.remove('on');
+  showQ(0);
+  sfC();
+}
+
+/* ── RESIZE ─────────────────────────────────────────────── */
+window.addEventListener('resize',()=>{
+  rPar();
+  // re-draw visible panels
+  const vis=n=>document.getElementById('lp-'+n)?.classList.contains('on');
+  if(vis('pegas')&&!pSt.o){const cv=document.getElementById('spC'),ar=document.getElementById('pc');if(ar.offsetWidth>0){syncCanvas(cv,ar);_pegas_draw(cv,+document.getElementById('px0').value)}}
+  if(vis('bandul')&&!bSt.o)initBandul();
+});
+
+/* ── BOOT ───────────────────────────────────────────────── */
+bQ();
+uN();uGe();
+setTimeout(initLab,160);
+</script>
+</body>
+</html>
